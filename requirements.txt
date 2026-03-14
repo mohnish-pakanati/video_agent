@@ -1,19 +1,26 @@
-# Minimal pinned dependencies required to run this project (created from current venv)
-TTS==0.22.0
-transformers==4.33.3
-torch==2.10.0
-torchaudio==2.10.0
-torchvision==0.25.0
-torchcodec==0.10.0
-streamlit==1.55.0
-numpy==1.26.4
-librosa==0.11.0
-soundfile==0.13.1
-pillow==12.1.1
-ffmpeg-python==0.2.0
-huggingface-hub==0.36.2
+# Core AI / ML — requires Python 3.10 or 3.11
+torch>=2.1.0,<2.6
+torchaudio>=2.1.0,<2.6
+torchvision>=0.16.0,<0.21
+transformers>=4.40.0
+TTS
+
+# Orchestration
+langgraph
+
+# UI
+streamlit
+
+# Audio / image utilities
+numpy<2
+librosa
+soundfile
+pillow
+ffmpeg-python
+huggingface-hub
 
 # Notes:
-# - FFmpeg itself is a system dependency and is not installed via pip. Use the
-#   portable_ffmpeg folder included in the repo or install a full-shared FFmpeg
-#   build on your system for codec support (OPUS, etc.).
+# - Requires Python 3.10 or 3.11 (3.12+ has limited ML library support).
+# - FFmpeg binary is a system dependency (not installed via pip).
+# - SadTalker and Wav2Lip are external repos — clone them separately
+#   and set SADTALKER_ROOT / WAV2LIP_ROOT environment variables.

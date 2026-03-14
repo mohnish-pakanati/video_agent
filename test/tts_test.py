@@ -1,22 +1,27 @@
-import torchaudio
-from TTS.api import TTS
+"""Smoke test for voice cloning via the tools.voice_clone module."""
 
-# Prefer a non-torchcodec backend so we don't need torchcodec/FFmpeg at runtime.
-# 'sox_io' is commonly available in torchaudio wheels; fall back to 'soundfile' if needed.
-try:
-    torchaudio.set_audio_backend("sox_io")
-except Exception:
-    try:
-        torchaudio.set_audio_backend("soundfile")
-    except Exception:
-        pass
+import os
+import sys
 
-tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2")
+# Allow imports from project root
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-tts.tts_to_file(
-    text="Hello. This is a test of the voice cloning system.",
-    # use a local WAV speaker file (we'll create outputs/speaker.wav from the original OPUS)
-    speaker_wav="outputs/speaker.wav",
-    file_path="outputs/test_audio.wav",
-    language="en",
-)
+import config
+from utils.logging_setup import setup_logging
+from tools.voice_clone import generate_voice
+
+setup_logging()
+config.ensure_dirs()
+
+state = {
+    "text": "Hello. This is a test of the voice cloning system.",
+    "acting_prompt": "",
+    "reference_voice": os.path.join(config.OUTPUT_DIR, "speaker.wav"),
+    "face_image": "",
+    "audio_path": "",
+    "raw_video_path": "",
+    "final_video_path": "",
+}
+
+result = generate_voice(state)
+print("Audio generated:", result["audio_path"])

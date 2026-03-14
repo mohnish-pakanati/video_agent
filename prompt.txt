@@ -101,46 +101,6 @@ START
 → render
 → END
 
-Voice Clone Node
-
-Use XTTS v2 from Coqui TTS.
-
-Input
-text
-reference_voice
-
-Output
-generated audio file
-
-Save the audio path to state["audio_path"]
-
-Talking Face Node
-
-Use SadTalker inference script.
-
-Input
-state["audio_path"]
-state["face_image"]
-
-Output
-animated talking video
-
-Save path to state["raw_video_path"]
-
-Lip Sync Node
-
-Use Wav2Lip inference.
-
-Input
-state["raw_video_path"]
-state["audio_path"]
-
-Output
-lip-synced video
-
-Save path to state["final_video_path"]
-
-Streamlit UI
 
 Create a Streamlit application that allows users to:
 
@@ -169,7 +129,7 @@ Design the code so that it can later run inside a GPU VM on Google Cloud.
 
 Avoid hardcoded paths.
 Allow environment variables for model paths.
-Ensure the pipeline can run as a CLI command for batch execution.
+
 
 Add a script:
 
@@ -201,4 +161,52 @@ README.md
 Example usage commands
 Comments explaining each component
 
-The result should be a working end-to-end AI video generat
+The result should be a working end-to-end AI video generation pipeline.
+
+
+# Interview Prep
+
+ How to Describe It
+
+    One-liner: "Built a modular AI video generation pipeline that creates talking avatar videos from text using voice cloning,  
+    face animation, and lip synchronization — orchestrated with LangGraph."
+
+    Key Technical Talking Points
+
+    1. Pipeline Architecture — LangGraph state graph with 4 sequential nodes (voice_clone → video_generate → lip_sync → render),
+     each reading/writing to a shared typed state
+    2. Voice Cloning — XTTS v2 model for zero-shot voice cloning from a reference audio sample
+    3. Face Animation — SadTalker for generating talking-face video from a still image + audio
+    4. Lip Sync — Wav2Lip for refining lip movements on the generated video
+    5. Post-processing — FFmpeg re-encoding to H.264/AAC for browser compatibility
+    6. UI — Streamlit interface for file upload and video playback
+
+    Questions You Should Be Ready For
+
+    - "Why LangGraph instead of just calling functions sequentially?" → State management, observability, easy to add conditional
+     branching (e.g., skip lip sync), and future extensibility (retries, human-in-the-loop)
+    - "How did you handle GPU vs CPU?" → Device auto-detection with torch.cuda.is_available(), configurable via env var, lazy   
+    model loading singleton
+    - "How is it cloud-ready?" → All paths configurable via environment variables, no hardcoded paths, modular design so each   
+    tool could become a microservice
+    - "What was the hardest part?" → SadTalker outputs to timestamped subdirectories, so discovering the actual output file     
+    required globbing for the newest .mp4 — a subtle bug that would silently break the pipeline
+    - "Why is Wav2Lip optional?" → SadTalker with GFPGAN enhancer already produces decent lip sync; making it optional reduces  
+    dependencies and improves reliability
+
+    Resume Bullet Points (pick 2-3)
+
+    - Engineered a multimodal AI pipeline combining XTTS v2, SadTalker, and Wav2Lip to generate talking avatar videos from text 
+    prompts
+    - Designed a LangGraph-orchestrated workflow with centralized state management and configurable environment-variable-based  
+    deployment for local/GCP portability
+    - Built a Streamlit UI and CLI interface for end-to-end video generation with lazy model loading, error handling, and FFmpeg
+     post-processing
+
+    Concepts You Should Understand Deeply
+
+    - TypedDict and why it's used for state schemas
+    - LangGraph's StateGraph — nodes, edges, entry/finish points, .compile(), .invoke()
+    - Subprocess management — check=True, capture_output, error handling
+    - Singleton pattern for expensive model loading
+    - Voice cloning basics — how XTTS v2 uses a reference audio to condition speech generatio

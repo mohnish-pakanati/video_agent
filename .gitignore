@@ -1,3 +1,27 @@
 /.qodo
 /venv
 /portable_ffmpeg
+/.claude
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Runtime directories
+outputs/
+models/
+inputs/
+
+# Environment
+.env
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# External model repos (cloned separately)
+SadTalker/
+Wav2Lip/
