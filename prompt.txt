@@ -1,0 +1,204 @@
+You are an expert Python AI engineer. Build a complete multimodal AI pipeline project.
+
+Goal
+Create an AI system that generates a talking video from a prompt using voice cloning, text-to-speech, talking-face generation, and lip synchronization.
+
+The project must be designed so it can run locally first, and later be deployed to Google Cloud Platform (GCP) with GPU workers.
+
+Core Capabilities
+
+1. Voice cloning from a reference audio sample
+2. Text-to-speech generation using the cloned voice
+3. Talking-face video generation from an image and audio
+4. Lip synchronization refinement
+5. Orchestration using LangGraph
+6. Streamlit user interface
+
+Technology Stack
+
+Language
+Python 3.10+
+
+Frameworks
+LangGraph
+Streamlit
+FastAPI (optional API layer)
+
+Models
+XTTS v2 for voice cloning and speech generation
+SadTalker for talking face animation
+Wav2Lip for lip sync correction
+
+Utilities
+FFmpeg
+PyTorch
+
+Project Requirements
+
+The system must follow a modular architecture with clear separation between tools, orchestration, and UI.
+
+Use the following project structure:
+
+ai-video-agent/
+
+agent/
+graph.py
+state.py
+
+tools/
+voice_clone.py
+video_generate.py
+lip_sync.py
+render.py
+
+pipeline/
+runner.py
+
+ui/
+streamlit_app.py
+
+models/
+xtts/
+sadtalker/
+wav2lip/
+
+inputs/
+outputs/
+
+requirements.txt
+README.md
+
+State Schema
+
+Define a shared LangGraph state object:
+
+class VideoAgentState(TypedDict):
+text: str
+acting_prompt: str
+reference_voice: str
+face_image: str
+audio_path: str
+raw_video_path: str
+final_video_path: str
+
+Each node in the graph must read from and update this state.
+
+LangGraph Workflow
+
+Construct a LangGraph pipeline with nodes:
+
+voice_clone
+video_generate
+lip_sync
+render
+
+Graph order:
+
+START
+→ voice_clone
+→ video_generate
+→ lip_sync
+→ render
+→ END
+
+Voice Clone Node
+
+Use XTTS v2 from Coqui TTS.
+
+Input
+text
+reference_voice
+
+Output
+generated audio file
+
+Save the audio path to state["audio_path"]
+
+Talking Face Node
+
+Use SadTalker inference script.
+
+Input
+state["audio_path"]
+state["face_image"]
+
+Output
+animated talking video
+
+Save path to state["raw_video_path"]
+
+Lip Sync Node
+
+Use Wav2Lip inference.
+
+Input
+state["raw_video_path"]
+state["audio_path"]
+
+Output
+lip-synced video
+
+Save path to state["final_video_path"]
+
+Streamlit UI
+
+Create a Streamlit application that allows users to:
+
+Enter dialogue text
+Enter acting/performance prompt
+Upload reference voice sample (.wav)
+Upload face image (.jpg or .png)
+Generate the video
+Display the resulting video
+
+Pipeline Runner
+
+Implement a runner that initializes the LangGraph workflow and invokes it with the provided inputs.
+
+Ensure the runner returns the final video path.
+
+Local Execution
+
+The system must run locally using CPU if GPU is unavailable.
+
+Include instructions for installing all dependencies.
+
+GCP Compatibility
+
+Design the code so that it can later run inside a GPU VM on Google Cloud.
+
+Avoid hardcoded paths.
+Allow environment variables for model paths.
+Ensure the pipeline can run as a CLI command for batch execution.
+
+Add a script:
+
+python run_pipeline.py 
+--text "Hello world" 
+--voice inputs/sample.wav 
+--image inputs/face.jpg 
+--prompt "confident cinematic delivery"
+
+Expected Output
+
+outputs/final_video.mp4
+
+Quality Constraints
+
+Write clean, production-grade Python.
+Use logging for major steps.
+Handle file errors gracefully.
+Document each module.
+Ensure the code is easy to deploy to a cloud GPU worker.
+
+Deliverables
+
+Generate:
+
+All Python files
+requirements.txt
+README.md
+Example usage commands
+Comments explaining each component
+
+The result should be a working end-to-end AI video generat

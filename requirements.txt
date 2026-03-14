@@ -1,0 +1,19 @@
+# Minimal pinned dependencies required to run this project (created from current venv)
+TTS==0.22.0
+transformers==4.33.3
+torch==2.10.0
+torchaudio==2.10.0
+torchvision==0.25.0
+torchcodec==0.10.0
+streamlit==1.55.0
+numpy==1.26.4
+librosa==0.11.0
+soundfile==0.13.1
+pillow==12.1.1
+ffmpeg-python==0.2.0
+huggingface-hub==0.36.2
+
+# Notes:
+# - FFmpeg itself is a system dependency and is not installed via pip. Use the
+#   portable_ffmpeg folder included in the repo or install a full-shared FFmpeg
+#   build on your system for codec support (OPUS, etc.).
